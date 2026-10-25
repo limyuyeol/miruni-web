@@ -1,4 +1,4 @@
-(() => {
+(async () => {
   "use strict";
   const S = window.MiruniScheduler,
     $ = (id) => document.getElementById(id);
@@ -63,10 +63,17 @@
   function validWorkMinutes(n, max = 60000) {
     return Number.isInteger(n) && n >= 0 && n <= max && n % 5 === 0;
   }
-  function load() {
+  const cloud = window.MiruniCloud;
+  const cloudInitial = cloud?.enabled ? await cloud.open() : null;
+  function load(imported) {
     try {
-      const raw = localStorage.getItem("miruni-v1");
-      if (!raw) return fresh();
+      const raw =
+        imported !== undefined
+          ? JSON.stringify(imported)
+          : cloud?.enabled
+            ? JSON.stringify(cloudInitial.state)
+            : localStorage.getItem("miruni-v1");
+      if (!raw || raw === "null") return fresh();
       const v = JSON.parse(raw);
       // Existing v1 records did not have recurring weekday settings.
       if (v.weekdays === undefined) v.weekdays = {};
@@ -156,7 +163,8 @@
           throw Error();
       }
       return v;
-    } catch {
+    } catch (error) {
+      if (imported !== undefined) throw error;
       storageFailed = true;
       return fresh();
     }
@@ -165,6 +173,10 @@
   const state = () => (demo ? demoState : realState);
   function save() {
     if (!demo) {
+      if (cloud?.enabled) {
+        if (!storageFailed) cloud.save(realState);
+        return;
+      }
       try {
         if (storageFailed) return;
         localStorage.setItem("miruni-v1", JSON.stringify(realState));
@@ -288,7 +300,9 @@
       ? "◌ 데모 기록 · 실제 기록과 분리"
       : storageFailed
         ? "저장 불가 · 현재 창에서만 유지"
-        : "● 이 브라우저에 자동 저장";
+        : cloud?.enabled
+          ? "● 로그인 계정에 저장 · 상단에서 상태 확인"
+          : "● 이 브라우저에 자동 저장";
   }
   function renderWork(task, plan) {
     if (!task) {
@@ -992,6 +1006,20 @@
     refresh: render,
     notify: toast,
   });
+  window.MiruniBackup = {
+    exportState: () => structuredClone(realState),
+    importState: (value) => {
+      if (demo) throw Error("데모를 종료한 뒤 가져와 줘.");
+      const next = load(value);
+      window.MiruniReactions.reset();
+      realState = next;
+      storageFailed = false;
+      save();
+      render();
+      toast("기록을 가져왔어. 상단에서 저장 상태를 확인해 줘.");
+    },
+  };
+  cloud?.ready();
   render();
   if (storageFailed)
     toast(

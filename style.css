@@ -2302,3 +2302,37 @@ label small {
     scroll-behavior: auto !important;
   }
 }
+/* Account and cross-device storage */
+.backup-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px 0;
+}
+#account-dialog {
+  padding: 28px;
+  width: min(560px, calc(100% - 32px));
+}
+#account-name,
+#cloud-status {
+  overflow-wrap: anywhere;
+}
+.sync-warning {
+  color: #964b30 !important;
+  background: #fff0e5 !important;
+}
+.cloud-gate {
+  padding: 32px;
+  max-width: 480px;
+  width: calc(100% - 32px);
+}
+.cloud-gate p {
+  margin: 18px 0;
+  line-height: 1.7;
+}
+.top-actions {
+  flex-wrap: wrap;
+}
+[hidden] {
+  display: none !important;
+}

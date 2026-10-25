@@ -19,6 +19,7 @@
     <script src="features.js" defer></script>
     <script src="reactions.js" defer></script>
     <script src="room-state.js" defer></script>
+    <script src="cloud.js" defer></script>
     <script src="app.js" defer></script>
   </head>
   <body>
@@ -58,6 +59,9 @@
         <header class="topbar">
           <span id="today-label"></span>
           <div class="top-actions">
+            <button class="button subtle small" id="account-button">
+              계정 · 백업
+            </button>
             <span class="demo-badge" id="demo-badge" hidden
               >시연 중 · 실제 기록과 분리</span
             ><button class="button subtle small" id="demo-button">
@@ -683,6 +687,50 @@
           시간 설정 저장
         </button>
       </form>
+    </dialog>
+    <dialog id="account-dialog">
+      <div class="dialog-heading">
+        <h2>계정 · 기록 백업</h2>
+        <button class="close-button" type="button" data-close aria-label="닫기">
+          ×
+        </button>
+      </div>
+      <p id="account-name">이 브라우저에서 사용 중</p>
+      <p id="cloud-status" role="status">기록은 이 브라우저에 저장돼.</p>
+      <p id="cloud-hint" class="muted small-copy">
+        기록을 파일로 보관하거나 다른 컴퓨터로 옮길 수 있어.
+      </p>
+      <div class="backup-actions">
+        <button class="button" id="export-records">기록 내보내기</button>
+        <button class="button" id="import-records">기록 가져오기</button>
+        <input
+          id="import-file"
+          type="file"
+          accept=".json,application/json"
+          hidden
+        />
+        <button class="button" id="cloud-retry" hidden>저장 다시 시도</button>
+        <button class="button" id="cloud-reload" hidden>
+          최신 기록 불러오기
+        </button>
+        <a
+          class="button"
+          id="cloud-login"
+          href="https://miruni-cloud.stormysloth128.chatgpt.site/"
+          target="_blank"
+          rel="noopener"
+          >로그인 · 서버 저장 버전 열기</a
+        >
+        <a
+          class="button"
+          id="cloud-logout"
+          href="/signout-with-chatgpt?return_to=%2F"
+          target="_top"
+          hidden
+          >로그아웃</a
+        >
+      </div>
+      <p id="backup-error" class="form-error" role="alert"></p>
     </dialog>
     <div id="toast" class="toast" role="status" hidden></div>
   </body>
