@@ -1,0 +1,238 @@
+.room .window {
+  border: 0;
+  cursor: pointer;
+  z-index: 2;
+  transition:
+    background 0.4s,
+    box-shadow 0.4s;
+}
+.room .window:after {
+  content: "";
+  position: absolute;
+  top: 15px;
+  right: 13px;
+  width: 18px;
+  height: 18px;
+  background: #ffe39a;
+  border-radius: 50%;
+  box-shadow: 0 0 14px #ffdf91;
+  pointer-events: none;
+}
+.room .window:not(:disabled):active {
+  transform: rotate(-2deg) scale(0.97);
+}
+.room .plant {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+.room .plant i {
+  pointer-events: none;
+}
+.room .books {
+  padding: 0;
+  border: 0;
+  background: none;
+  top: auto;
+  bottom: 9px;
+  left: 5px;
+  width: 48px;
+  transform: none;
+  z-index: 3;
+  cursor: pointer;
+  overflow: visible;
+}
+.room-book {
+  position: absolute;
+  left: 0;
+  bottom: calc(var(--i) * 7px);
+  width: 43px;
+  height: 8px;
+  background: #f4e8c4;
+  border-left: 5px solid #be896e;
+  border-top: 1px solid #b4aa89;
+  border-bottom: 1px solid #b4aa89;
+  border-radius: 2px;
+  transform: rotate(var(--tilt));
+  transition: transform 0.3s;
+  pointer-events: none;
+}
+.room-book:nth-child(3n + 1) {
+  border-left-color: #78946f;
+  background: #e2e6cc;
+}
+.room-book:nth-child(3n + 2) {
+  border-left-color: #a2829b;
+  background: #eee0e5;
+  width: 46px;
+}
+.books.arranged .room-book {
+  transform: rotate(0deg);
+}
+.room .cup {
+  border: 0;
+  background: none;
+  padding: 0;
+  top: auto;
+  bottom: 7px;
+  right: 2px;
+  width: 67px;
+  z-index: 3;
+  cursor: pointer;
+}
+.room-coffee-cup {
+  position: absolute;
+  left: calc(var(--col) * 20px);
+  bottom: calc(var(--row) * 22px);
+  font-size: 24px;
+  line-height: 1.2;
+  filter: drop-shadow(1px 2px 1px #4b3d3d20);
+  pointer-events: none;
+}
+.room-lamp {
+  position: absolute;
+  right: 35px;
+  top: 52px;
+  width: 35px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: #fff7c866;
+  border-radius: 20px;
+  font-size: 22px;
+  z-index: 3;
+  padding: 0;
+  filter: drop-shadow(0 0 7px #ffe280);
+}
+.room-play-hint {
+  font-size: 10px;
+  text-align: center;
+  color: #77856b;
+  padding: 10px 12px 0;
+}
+.room[data-time="night"] {
+  background: #323e54;
+}
+.room[data-time="night"]:after {
+  background: #293444;
+  border-color: #425069;
+}
+.room[data-time="night"] .window {
+  background: #63758c;
+  box-shadow: 8px 10px 0 #94a3c012;
+}
+.room[data-time="night"] .window span {
+  background: #172741;
+}
+.room[data-time="night"] .window span:nth-child(2) {
+  background: #1c304d;
+}
+.room[data-time="night"] .window:after {
+  background: transparent;
+  box-shadow: -5px 3px 0 1px #ffe9aa;
+  right: 10px;
+  top: 11px;
+}
+.room[data-time="night"] .wall-label,
+.room[data-time="night"] .room-caption {
+  color: #c4cfda;
+}
+.room[data-time="night"] .floating-note {
+  background: #f5f5e9;
+  color: #566345;
+}
+.room[data-time="night"][data-mood="done"] {
+  background: #4d516b;
+}
+.room[data-light="off"] {
+  box-shadow: inset 0 0 110px 45px #101d3560;
+}
+.room[data-light="off"] .room-lamp {
+  filter: grayscale(1);
+  background: #75818c30;
+}
+.room[data-light="off"] .mascot {
+  filter: brightness(0.65) saturate(0.65);
+}
+.room-effect {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  font-size: 29px;
+  opacity: 0;
+}
+.room-effect[data-kind="plant"] {
+  left: 28px;
+  bottom: 72px;
+}
+.room-effect[data-kind="coffee"] {
+  right: 23%;
+  bottom: 87px;
+  color: #fff7de;
+}
+.room-effect[data-kind="books"] {
+  left: 23%;
+  bottom: 110px;
+  color: #d6a45a;
+}
+.room-effect.show {
+  animation: room-float 1.3s ease-out;
+}
+.room-bounce {
+  animation: room-nudge 0.45s ease;
+}
+@keyframes room-nudge {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  35% {
+    translate: 0 -5px;
+  }
+  70% {
+    translate: 0 2px;
+  }
+}
+@keyframes room-float {
+  0% {
+    opacity: 0;
+    translate: 0 7px;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    translate: 0 -25px;
+  }
+}
+@media (max-width: 600px) {
+  .room-lamp {
+    right: 26px;
+    top: 48px;
+  }
+  .room-play-hint {
+    font-size: 9px;
+  }
+  .room .books {
+    left: 0;
+  }
+  .room .cup {
+    right: -4px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .room-bounce,
+  .room-effect.show {
+    animation: none;
+  }
+  .room-effect.show {
+    opacity: 1;
+  }
+  .room-book,
+  .room .window {
+    transition: none;
+  }
+}
