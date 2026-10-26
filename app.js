@@ -64,6 +64,9 @@
     return Number.isInteger(n) && n >= 0 && n <= max && n % 5 === 0;
   }
   const cloud = window.MiruniCloud;
+  const presentation = !cloud?.enabled && window.MiruniPresentation;
+  const storageKey = presentation ? presentation.key : "miruni-v1";
+  const recordStorage = () => (presentation ? sessionStorage : localStorage);
   const cloudInitial = cloud?.enabled ? await cloud.open() : null;
   function load(imported) {
     try {
@@ -72,7 +75,8 @@
           ? JSON.stringify(imported)
           : cloud?.enabled
             ? JSON.stringify(cloudInitial.state)
-            : localStorage.getItem("miruni-v1");
+            : recordStorage().getItem(storageKey) ||
+              (presentation ? JSON.stringify(presentation.state) : null);
       if (!raw || raw === "null") return fresh();
       const v = JSON.parse(raw);
       // Existing v1 records did not have recurring weekday settings.
@@ -179,7 +183,7 @@
       }
       try {
         if (storageFailed) return;
-        localStorage.setItem("miruni-v1", JSON.stringify(realState));
+        recordStorage().setItem(storageKey, JSON.stringify(realState));
       } catch {
         storageFailed = true;
         toast(
@@ -302,7 +306,9 @@
         ? "저장 불가 · 현재 창에서만 유지"
         : cloud?.enabled
           ? "● 로그인 계정에 저장 · 상단에서 상태 확인"
-          : "● 이 브라우저에 자동 저장";
+          : presentation
+            ? "● 공개 시연 · 현재 탭에만 저장"
+            : "● 이 브라우저에 자동 저장";
   }
   function renderWork(task, plan) {
     if (!task) {
@@ -1020,6 +1026,35 @@
     },
   };
   cloud?.ready();
+  if (presentation) {
+    $("account-button").textContent = "기록 백업";
+    $("account-name").textContent = "공개 시연용 기록";
+    $("cloud-status").textContent = "시연 중 변경은 현재 탭에만 저장돼.";
+    $("cloud-hint").textContent =
+      "다른 컴퓨터에서는 제공된 원본 기록으로 시작해. 서버 기록과는 연결되지 않아.";
+    $("cloud-login").hidden = true;
+    const banner = document.createElement("div");
+    banner.className = "presentation-banner";
+    const label = document.createElement("span");
+    label.textContent = `${presentation.date} 기록으로 시연 중 · 변경은 현재 탭에만 적용`;
+    const reset = document.createElement("button");
+    reset.className = "button small";
+    reset.textContent = "시연 처음으로";
+    reset.onclick = () => {
+      if (!confirm("시연 중 바꾼 내용을 지우고 처음 제공된 기록으로 돌아갈까?"))
+        return;
+      try {
+        recordStorage().removeItem(storageKey);
+        location.reload();
+      } catch {
+        toast(
+          "이 브라우저에서 초기화할 수 없어. 새 탭에서 공개 링크를 열어 줘.",
+        );
+      }
+    };
+    banner.append(label, reset);
+    document.querySelector(".content").prepend(banner);
+  }
   render();
   if (storageFailed)
     toast(

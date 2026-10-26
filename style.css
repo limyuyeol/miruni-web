@@ -2336,3 +2336,16 @@ label small {
 [hidden] {
   display: none !important;
 }
+.presentation-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 18px;
+  margin-bottom: 22px;
+  background: #eaf0e2;
+  color: #365142;
+  border-radius: 12px;
+  font-size: 13px;
+}
